@@ -4,6 +4,7 @@ package com.minivest.mutualfunds;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
@@ -15,6 +16,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 // Enables @Scheduled annotation — we need this for the SIP cron job.
 // Without this, @Scheduled methods won't execute.
+@EnableRetry
+// Enable retry in your main application class
 public class MutualfundsApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(MutualfundsApplication.class, args);

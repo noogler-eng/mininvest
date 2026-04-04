@@ -3,6 +3,9 @@ package com.minivest.scheduler;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
+import org.springframework.retry.annotation.Backoff;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -51,6 +54,17 @@ public class KycPollingScheduler {
         }
     }
 
+    // Retry Rules:
+    // 1. network timeout, server error (5xx). Don't retry validation errors (4xx) or business logic failures.
+    // 2. exponential or at least fixed delay. Never retry immediately.
+    // 3. infinite retries = infinite loop = thread exhaustion = app crash.
+    @Retryable(
+        retryFor = Exception.class, // retry on any exception
+        maxAttempts = 3, // try a maximum of 3 times
+        // Exponential backoff: 1st retry after 1s, 2nd after 2s, 3rd after 4s.
+        // wait 1 seconds before
+        backoff = @Backoff(delay = 1000, multiplier = 2)
+    )
     public KycStatus pollKycStatusForUser(User user){
         try{
             // call NDML / CVL api to get the latest KYC status for the user
@@ -69,5 +83,12 @@ public class KycPollingScheduler {
             log.error("Error while polling KYC status for user: {}", user.getEmail(), e);
             return KycStatus.UNDER_PROCESS; 
         }
+    }
+
+    @Recover
+    // if all retries fail, we return UNDER_PROCESS to try again in the next scheduled run.
+    public KycStatus recover(Exception e, User user){
+        log.error("All retries failed for user: {}. Marking KYC status as UNDER_PROCESS", user.getEmail(), e);
+        return KycStatus.UNDER_PROCESS; 
     }
 }
