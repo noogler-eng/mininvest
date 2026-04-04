@@ -1,0 +1,90 @@
+# docker-compose.yml — defines ALL services your app needs
+# Run: docker compose up -d → everything starts!
+# Run: docker compose down → everything stops.
+# Run: docker compose logs -f → follow all logs.
+
+version: '3.8'
+
+services:
+  postgres:
+    # 'alpine' = minimal Linux base (50MB vs 400MB)
+    # Create a database named 'minivest' on first startup.
+    # Create a user named 'minivest' with full access to the database.
+    image: postgres:16-alpine
+    container_name: minivest-db
+    environment:
+      POSTGRES_DB: minivest
+      POSTGRES_USER: minivest
+      POSTGRES_PASSWORD: minivest123
+    ports:
+      # Map host port 5432 → container port 5432.
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      # Docker checks if PostgreSQL is ready to accept connections.
+      test: ["CMD-SHELL", "pg_isready -U minivest -d minivest"]
+      # Check every 5 seconds.
+      interval: 5s
+      # failures = container marked as 'unhealthy'.
+      retries: 5
+      # start_period: 10s
+      start_period: 10s
+
+  rabbitmq:
+    # '-management' tag includes a web dashboard
+    image: rabbitmq:3-management-alpine
+    container_name: minivest-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: minivest
+      RABBITMQ_DEFAULT_PASS: minivest123
+    ports:
+      # your Java app connects here to send/receive messages.
+      - "5672:5672" 
+      # RabbitMQ management UI
+      - "15672:15672" 
+    healthcheck:
+      # Docker checks if RabbitMQ is ready to accept connections.
+      test: ["CMD-SHELL", "rabbitmqctl -q status || exit 1"]
+      # Check every 10 seconds.
+      interval: 10s
+      # failures = container marked as 'unhealthy'.
+      retries: 5
+      # start_period: 20s, as takes 20s to start up and be ready to accept connections.
+      start_period: 20s 
+    
+  # buidling dockerfile in our current directory ...
+  app:
+    build: .
+    container_name: minivest-app
+    ports:
+      # Map host port 8080 → container port 8080.
+      - "8080:8080"
+    
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/minivest
+      SPRING_DATASOURCE_USERNAME: minivest
+      SPRING_DATASOURCE_PASSWORD: minivest123
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: minivest
+      SPRING_RABBITMQ_PASSWORD: minivest123
+
+      RAZORPAY_KEY_ID: rzp_test_YOUR_KEY_HERE
+      RAZORPAY_KEY_SECRET: your_secret_here
+
+    depends_on:
+      # app starts only after these services are healthy.
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+    # if app crashes, restart it automatically.
+    restart: unless-stopped 
+
+# Named volume for PostgreSQL data persistence.
+# Docker manages storage location. Data survives 'docker compose down'.
+# To FULLY reset: docker compose down -v (deletes volumes too).
+volumes:
+  pgdata:
