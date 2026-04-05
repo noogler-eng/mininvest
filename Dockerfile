@@ -17,14 +17,19 @@ RUN mvn package -DskipTests -B
 # The resulting JAR will be in target/ directory.
 # Tests should run in CI pipeline, not during Docker build.
 
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:17-jre
 # ONLY JRE needed to RUN (not full JDK). Alpine = tiny (~80MB vs ~400MB).
 
 WORKDIR /app
 # Copy ONLY the JAR from build stage. Build tools NOT included → tiny image!
 COPY --from=builder /app/target/*.jar app.jar
 # DON'T run as root! Create a non-root user for security.
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+# Create a group and user using Debian/Ubuntu syntax
+RUN groupadd -r appgroup && useradd -r -g appgroup appuser
+
+# Set permissions for the jar file so appuser can run it
+RUN chown appuser:appgroup app.jar
+
 USER appuser
 
 # port of the container ready to connect

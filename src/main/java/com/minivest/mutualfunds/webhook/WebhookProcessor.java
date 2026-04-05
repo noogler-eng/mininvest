@@ -15,10 +15,10 @@ public class WebhookProcessor {
         // builder pattern is used to create complex objects with many parameters in a readable way. 
         // It allows you to set only the fields you care about and provides a 
         // fluent API for object creation.
-        OrderEvent event = OrderEvent.builder()
-            .eventType("payment_captured")
-            .razorpayOrderId("order_123")
-            .build();
+        // OrderEvent event = OrderEvent.builder()
+        //     .eventType("payment_captured")
+        //     .razorpayOrderId("order_123")
+        //     .build();
 
         // Both consumers run INDEPENDENTLY and CONCURRENTLY.
         // If email service is down, MF order still processes!
@@ -27,8 +27,8 @@ public class WebhookProcessor {
 
         // 2. Publish to both queues
         // MF order consumer picks up → places order on BSE
-        orderPublisher.publishMfOrderEvent(event);
+        // orderPublisher.publishMfOrderEvent(event);
         // Notification consumer picks up → sends SMS + email
-        orderPublisher.publishNotificationEvent(event);
+        // orderPublisher.publishNotificationEvent(event);
     }
 }

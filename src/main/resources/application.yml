@@ -1,6 +1,45 @@
+# application.yml — ALL application configuration lives here.
+# Spring Boot reads this on startup, 
+# injects values via @Value or @ConfigurationProperties
+
+server:
+  port: 8080
+
 spring:
   application:
     name: mutualfunds
 
-postgresql:
-  
+# Reads DATABASE_URL env var. Falls back to local Postgres if not set.
+datasource:
+  url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/minivest}
+  username: ${DB_USERNAME:minivest}
+  password: ${DB_PASSWORD:minivest123}
+  driver-class-name: org.postgresql.Driver
+
+# validate = check that entities match the DB schema. DON'T create tables!
+# Liquibase creates tables. Hibernate only validates they match entities.
+# Options: validate (recommended), none (production), create (NEVER with Liquibase!)
+jpa:
+  hibernate:
+    ddl-auto: validate
+  # print SQL queries in console (helpful for learning)
+  show-sql: true
+  properties:
+    hibernate:
+      # pretty-print SQL (easier to read)
+      format_sql: true
+      # Tell Hibernate to generate PostgreSQL-specific SQL.
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+
+# Liquibase configuration
+liquibase:
+  # ChangeLog file with DB schema changesets
+  change-log: classpath:db/changelog/db.changelog-master.yaml
+  # Run migrations automatically on app startup
+  # Set to false if you want to run migrations manually.
+  enabled: true  
+
+razorpay:
+  key-id: ${RAZORPAY_KEY_ID:rzp_test_REPLACE_ME}
+  key-secret: ${RAZORPAY_KEY_SECRET:rzp_test_REPLACE_ME}
+  webhook-secret: ${RAZORPAY_WEBHOOK_SECRET:your_webhook_secret_here}
