@@ -1,17 +1,8 @@
 package com.minivest.mutualfunds.service;
-
-import org.json.JSONObject;
+import com.minivest.mutualfunds.dto.RegisterUserRequest;
 
 public interface UserService {
-    public void createCustomer(String name, String email, String phone);
-    public void createOrder(Long amount, String receipt, JSONObject notes);
-    
-    public void getUserPendingAction();
-
-    public boolean verifyPaymentSignature(String orderId, String paymentId, String signature); 
-    public void verifyWebhookSignature(String payload, String signature);
-    
-    public void fetchPayment(String paymentId);
-
-    public void createRefund(String paymentId, Long amount, String reason);
+   public void createUser(RegisterUserRequest req);
+   public void getUser(Long userId);
+   public void getBankFromIfsc(String ifsc);
 }
