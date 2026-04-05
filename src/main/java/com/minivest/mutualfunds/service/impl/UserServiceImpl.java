@@ -1,7 +1,9 @@
 package com.minivest.mutualfunds.service.impl;
 
 import org.json.JSONObject;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UserServiceImpl {
     public void createCustomer(String name, String email, String phone){
 
