@@ -1,7 +1,7 @@
 package com.minivest.mutualfunds.enums;
 
 public enum KycStatus {
-    VERIFIED,
-    UNDER_PROCESS,
-    REJECTED 
+    VERIFIED,               // KYC completed and verified
+    UNDER_PROCESS,          // KYC submitted, waiting for verification.
+    REJECTED                // KYC rejected     
 }

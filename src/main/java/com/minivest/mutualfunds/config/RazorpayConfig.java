@@ -24,6 +24,9 @@ public class RazorpayConfig {
     // Singleton = ONE instance shared across entire app (thread-safe for Razorpay client).
     public RazorpayClient razorpayClient() throws RazorpayException {
         // Creates and returns a RazorpayClient bean using the injected properties.
+        // RazorpayClient internally stores keyId and keySecret.
+        // Every API call uses Basic Auth: base64(keyId + ":" + keySecret).
+        // This client is REUSABLE — create once, use for all API calls.
         return new RazorpayClient(keyId, keySecret);
     }
 }
