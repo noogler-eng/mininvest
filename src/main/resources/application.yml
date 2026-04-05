@@ -34,7 +34,7 @@ jpa:
 # Liquibase configuration
 liquibase:
   # ChangeLog file with DB schema changesets
-  change-log: classpath:db/changelog/db.changelog-master.yaml
+  change-log: classpath:db/changelog/db.changelog-master.xml
   # Run migrations automatically on app startup
   # Set to false if you want to run migrations manually.
   enabled: true  
