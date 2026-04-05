@@ -5,45 +5,40 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
 
-    <changeSet id="005-create-sip-installments-table" author="sharad">
-        <comment>Create sip_installments table to track monthly debit records</comment>
+    <changeSet id="002-create-bank-accounts-table" author="sharad">
+        <comment>Create bank_accounts table with relationship to user</comment>
         
-        <createTable tableName="sip_installments">
+        <createTable tableName="bank_accounts">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
 
-            <column name="sip_id" type="bigint">
+            <column name="user_id" type="bigint">
                 <constraints nullable="false" 
-                             foreignKeyName="fk_installment_sip" 
-                             referencedTableName="sip_registrations" 
+                             foreignKeyName="fk_bankaccount_user" 
+                             referencedTableName="user" 
                              referencedColumnNames="id"/>
             </column>
 
-            <column name="installment_number" type="integer">
+            <column name="account_number" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="amount" type="decimal(12,2)">
+            <column name="ifsc" type="varchar(11)">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="due_date" type="date">
+            <column name="bank_name" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="razorpay_payment_id" type="varchar(50)"/>
-
-            <column name="payment_status" type="varchar(30)">
+            <column name="account_holder_name" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="failure_reason" type="text"/>
+            <column name="verified" type="boolean" defaultValueBoolean="false"/>
 
-            <column name="retry_count" type="integer" defaultValueNumeric="0"/>
-
-            <column name="created_at" type="timestamp"/>
-            <column name="updated_at" type="timestamp"/>
+            <column name="primary_account" type="boolean" defaultValueBoolean="false"/>
         </createTable>
     </changeSet>
 

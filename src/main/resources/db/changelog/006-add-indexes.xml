@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <changeSet id="006-add-indexes" author="sharad">
+        <comment>Indexes for high-traffic query columns</comment>
+
+        <createIndex indexName="idx_transaction_user_id" tableName="transactions">
+            <column name="user_id"/>
+        </createIndex>
+
+        <createIndex indexName="idx_transaction_razorpay_order" tableName="transactions">
+            <column name="razorpay_order_id"/>
+        </createIndex>
+
+        <createIndex indexName="idx_sip_installments_scheduler" tableName="sip_installments">
+            <column name="due_date"/>
+            <column name="payment_status"/>
+        </createIndex>
+
+        <createIndex indexName="idx_sip_registrations_user_id" tableName="sip_registrations">
+            <column name="user_id"/>
+        </createIndex>
+
+        <createIndex indexName="idx_bank_account_number" tableName="bank_accounts">
+            <column name="account_number"/>
+        </createIndex>
+
+    </changeSet>
+
+</databaseChangeLog>

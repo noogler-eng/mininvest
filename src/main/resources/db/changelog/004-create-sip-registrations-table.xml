@@ -5,48 +5,47 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
 
-    <changeSet id="003-create-transactions-table" author="sharad">
-        <comment>Create transactions ledger for payments and refunds</comment>
+    <changeSet id="004-create-sip-registrations-table" author="sharad">
+        <comment>Create sip_registrations table for recurring investment mandates</comment>
         
-        <createTable tableName="transactions">
+        <createTable tableName="sip_registrations">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
 
             <column name="user_id" type="bigint">
                 <constraints nullable="false" 
-                             foreignKeyName="fk_transaction_user" 
+                             foreignKeyName="fk_sip_user" 
                              referencedTableName="user" 
                              referencedColumnNames="id"/>
             </column>
 
-            <column name="amount" type="decimal(12,2)">
-                <constraints nullable="false"/>
-            </column>
-
-            <column name="transaction_type" type="varchar(30)">
-                <constraints nullable="false"/>
-            </column>
-
-            <column name="transaction_status" type="varchar(30)">
-                <constraints nullable="false"/>
-            </column>
-
-            <column name="razorpay_order_id" type="varchar(50)"/>
-            
-            <column name="razorpay_payment_id" type="varchar(50)">
-                <constraints unique="true"/>
-            </column>
-            
-            <column name="razorpay_signature" type="varchar(255)"/>
-
-            <column name="razorpay_refund_id" type="varchar(50)">
-                <constraints unique="true"/>
-            </column>
-
             <column name="scheme_name" type="varchar(255)"/>
-            <column name="payment_method" type="varchar(50)"/>
-            <column name="failure_reason" type="text"/> <column name="created_at" type="timestamp"/>
+
+            <column name="amount" type="decimal(10,2)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="sip_date" type="integer">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="start_date" type="varchar(7)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="mandate_order_id" type="varchar(50)"/>
+            <column name="mandate_token_id" type="varchar(50)"/>
+
+            <column name="mandate_status" type="varchar(30)"/>
+            
+            <column name="sip_status" type="varchar(30)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="completed_installments" type="integer" defaultValueNumeric="0"/>
+
+            <column name="created_at" type="timestamp"/>
             <column name="updated_at" type="timestamp"/>
         </createTable>
     </changeSet>
