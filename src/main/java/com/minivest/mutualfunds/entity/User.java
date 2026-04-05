@@ -6,6 +6,8 @@ import com.minivest.mutualfunds.enums.KycStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -47,6 +49,7 @@ public class User {
     @Column(name = "bank_account_verified")
     private boolean bankVerified;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "kyc_status")
     private KycStatus kycStatus;
 
